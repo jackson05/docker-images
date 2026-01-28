@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres-primary:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: postgres-primary
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+    networks:
+      - postgres-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-secondary:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: postgres-secondary
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mydatabase_secondary
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_secondary_data:/var/lib/postgresql/data
+    networks:
+      - postgres-network
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_primary_data:
+  postgres_secondary_data:
+
+networks:
+  postgres-network:
+    driver: bridge
