@@ -14,7 +14,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_primary_data:/var/lib/postgresql/data
+      - postgres_primary_data:/var/lib/postgresql/18/data
     networks:
       - postgres-network
     healthcheck:
@@ -36,7 +36,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres_secondary_data:/var/lib/postgresql/data
+      - postgres_secondary_data:/var/lib/postgresql/18/data
     networks:
       - postgres-network
     depends_on:
@@ -53,7 +53,7 @@ services:
     container_name: pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: 'False'
